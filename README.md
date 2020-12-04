@@ -38,11 +38,11 @@ function part2(puzzle) {
 puzzle = document.body.textContent.trimRight().split('\n').map(Number)
 
 function part1(puzzle) {
-  return puzzle.filter(e => checkPwd(dissectPolicy(e))).length
+  return puzzle.filter(p => checkPwd(dissectPolicy(p))).length
 }
 
 function part2(puzzle) {
-  return puzzle.filter(e => checkPwdV2(dissectPolicy(e))).length
+  return puzzle.filter(p => checkPwdV2(dissectPolicy(p))).length
 }
 
 // helpers:
@@ -102,5 +102,54 @@ function countTrees(treesMap, rightSlope, downSlope) {
   }
 
   return trees
+}
+```
+
+### day 3
+
+```js
+testPuzzles = document.querySelectorAll('pre > code')
+
+part1Test = testPuzzles[0].textContent.split('\n\n')
+part2InvalidsTest = testPuzzles[2].textContent.split('\n\n')
+part2ValidsTest = testPuzzles[3].textContent.split('\n\n')
+
+puzzle = document.body.textContent.split('\n\n')
+
+function part1(puzzle) {
+  return puzzle.filter(p =>
+    checkPassport(dissectPassport(p), ['byr', 'iyr', 'eyr', 'hgt', 'hcl', 'ecl', 'pid'])
+  ).length
+}
+
+function part2(puzzle) {
+  return puzzle.filter(p => checkPassportV2(dissectPassport(p), Object.keys(validators))).length
+}
+
+const validators = {
+  byr: /^(19[2-9][0-9]|200[0-2])$/,
+  iyr: /^20(1[0-9]|20)$/,
+  eyr: /^20(2[0-9]|30)$/,
+  hgt: /^(1([5-8][0-9]|9[0-3])cm|(59|6[0-9]|7[0-6])in)$/,
+  hcl: /^#[0-9a-f]{6}$/,
+  ecl: /^(amb|blu|brn|gry|grn|hzl|oth)$/,
+  pid: /^\d{9}$/,
+}
+
+// helpers:
+function dissectPassport(rawPassport) {
+  return Object.fromEntries(rawPassport.split(/\s+/).map(pair => pair.split(':')))
+}
+
+function checkPassport(passport, requiredFields) {
+  const passportFields = Object.keys(passport)
+  return requiredFields.every(field => passportFields.includes(field))
+}
+
+function checkPassportV2(passport, requiredFields) {
+  const passportFields = Object.keys(passport)
+  return requiredFields.every(
+    field => passportFields.includes(field) && validators[field].test(passport[field])
+  )
 }
 ```
