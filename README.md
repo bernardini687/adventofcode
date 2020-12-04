@@ -105,7 +105,7 @@ function countTrees(treesMap, rightSlope, downSlope) {
 }
 ```
 
-### day 3
+### day 4
 
 ```js
 testPuzzles = document.querySelectorAll('pre > code')
