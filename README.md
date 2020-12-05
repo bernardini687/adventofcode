@@ -7,11 +7,11 @@ puzzle = document.body.textContent.trimRight().split('\n').map(Number)
 
 function part1(puzzle) {
   while (puzzle.length) {
-    let a = puzzle.pop()
+    let seats = puzzle.pop()
 
     for (const x of puzzle) {
-      if (a + x === 2020) {
-        return a * x
+      if (seats + x === 2020) {
+        return seats * x
       }
     }
   }
@@ -19,12 +19,12 @@ function part1(puzzle) {
 
 function part2(puzzle) {
   while (puzzle.length) {
-    let a = puzzle.pop()
+    let seats = puzzle.pop()
 
     for (const x of puzzle) {
       for (const y of puzzle) {
-        if (a + x + y === 2020) {
-          return a * x * y
+        if (seats + x + y === 2020) {
+          return seats * x * y
         }
       }
     }
@@ -151,5 +151,62 @@ function checkPassportV2(passport, requiredFields) {
   return requiredFields.every(
     field => passportFields.includes(field) && validators[field].test(passport[field])
   )
+}
+```
+
+### day 5
+
+```js
+puzzle = document.body.textContent.trimRight().split('\n')
+
+function part1(puzzle) {
+  return Math.max(...puzzle.map(calcSeatId))
+}
+
+function part2(puzzle) {
+  logNonConsecutiveSeat(puzzle.map(calcSeatId).sort((a, b) => a - b))
+}
+
+// helpers:
+function halve(seats, directions) {
+  const dir = directions.shift()
+  if (!dir) return seats
+
+  if ('FL'.includes(dir)) {
+    // upper half
+    return halve(seats.slice(0, seats.length / 2), directions)
+  } else {
+    // lower half
+    return halve(seats.slice(seats.length / 2), directions)
+  }
+}
+
+function* range(min, max) {
+  for (let i = min; i < max; i++) yield i
+}
+
+function decodeRow(boardingPass) {
+  const rows = Array.from(range(0, 128))
+  return halve(rows, boardingPass.slice(0, -3).split(''))
+}
+
+function decodeCol(boardingPass) {
+  const cols = Array.from(range(0, 8))
+  return halve(cols, boardingPass.slice(-3).split(''))
+}
+
+function calcSeatId(boardingPass) {
+  const [row] = decodeRow(boardingPass)
+  const [col] = decodeCol(boardingPass)
+  return row * 8 + col
+}
+
+function logNonConsecutiveSeat(seats) {
+  for (i = 0; i < seats.length; i++) {
+    if (seats[i] + 1 !== seats[i + 1]) {
+      console.log(seats[i] + 1)
+      break
+    }
+  }
 }
 ```
