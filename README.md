@@ -210,3 +210,31 @@ function logNonConsecutiveSeat(seats) {
   }
 }
 ```
+
+### day 6
+
+```js
+testPuzzle = document.querySelectorAll('pre > code')[1].textContent.trimRight().split('\n\n')
+puzzle = document.body.textContent.trimRight().split('\n\n')
+
+function part1(puzzle) {
+  return puzzle.reduce((tot, group) => (tot += uniqYesAnswers(group)), 0)
+}
+
+function part2(puzzle) {
+  return puzzle.reduce((tot, group) => (tot += crossYesAnswers(group)), 0)
+}
+
+// helpers:
+function uniqYesAnswers(group) {
+  return new Set(Array.from(group.replace(/\n/g, ''))).size
+}
+
+function crossYesAnswers(group) {
+  const groupAnswers = group.split('\n').map(answers => answers.split(''))
+
+  // build an intersection of the newline-separated answers
+  // [[a,b],[a,c],[a,d]] -> [a]
+  return groupAnswers.reduce((a, b) => a.filter(c => b.includes(c))).length
+}
+```
