@@ -238,3 +238,86 @@ function crossYesAnswers(group) {
   return groupAnswers.reduce((a, b) => a.filter(c => b.includes(c))).length
 }
 ```
+
+### day 7
+
+build an Adjacency List to represent a DAG (Directed Acyclic Graph) from the puzzle's input.
+find all vertices with edges pointing to `shiny gold` (find `shiny gold`'s ancestors).
+
+### day 8
+
+```js
+puzzle = document.body.textContent.trimRight().split('\n')
+
+function part1(puzzle) {
+  run(load(puzzle))
+}
+
+function part2(puzzle) {
+  const firstRun = load(puzzle)
+
+  try {
+    run(firstRun)
+  } catch (error) {
+    console.error(error.message)
+  }
+
+  // narrow the bug to executed `jmp` and `nop` instructions
+  const bugRange = firstRun.filter(i => i.ec && ['jmp', 'nop'].includes(i.opcode))
+
+  // for each possible bug, reload and run the program after flipping the bug's instruction
+  for (const flipMe of bugRange) {
+    const reloaded = load(puzzle)
+    reloaded[flipMe.index].opcode = reloaded[flipMe.index].opcode === 'jmp' ? 'nop' : 'jmp'
+    try {
+      run(reloaded)
+    } catch (error) {
+      console.error(error.message)
+    }
+  }
+}
+
+// helpers:
+function load(puzzle) {
+  return puzzle.map((rawInstruction, index) => {
+    const [opcode, arg] = rawInstruction.split(' ')
+
+    return {
+      opcode,
+      arg: Number(arg),
+      ec: 0, // execution counter
+      index,
+    }
+  })
+}
+
+function run(program, executionThreshold = 0) {
+  let acc = 0
+  let pc = 0
+
+  while (program[pc]) {
+    if (program[pc].ec > executionThreshold) {
+      throw new Error(`Aborting @${JSON.stringify(program[pc])} PC: ${pc}, ACC: ${acc}`)
+    }
+
+    program[pc].ec++
+
+    switch (program[pc].opcode) {
+      case 'acc':
+        acc += program[pc].arg
+        pc++
+        break
+      case 'jmp':
+        pc += program[pc].arg
+        break
+      case 'nop':
+        pc++
+        break
+      default:
+        console.error('Unknown opcode!')
+    }
+  }
+
+  console.log('Ok:', acc)
+}
+```
