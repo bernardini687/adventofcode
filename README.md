@@ -7,11 +7,11 @@ puzzle = document.body.textContent.trimRight().split('\n').map(Number)
 
 function part1(puzzle) {
   while (puzzle.length) {
-    let seats = puzzle.pop()
+    let a = puzzle.pop()
 
     for (const x of puzzle) {
-      if (seats + x === 2020) {
-        return seats * x
+      if (a + x === 2020) {
+        return a * x
       }
     }
   }
@@ -19,12 +19,12 @@ function part1(puzzle) {
 
 function part2(puzzle) {
   while (puzzle.length) {
-    let seats = puzzle.pop()
+    let a = puzzle.pop()
 
     for (const x of puzzle) {
       for (const y of puzzle) {
-        if (seats + x + y === 2020) {
-          return seats * x * y
+        if (a + x + y === 2020) {
+          return a * x * y
         }
       }
     }
@@ -319,5 +319,68 @@ function run(program, executionThreshold = 0) {
   }
 
   console.log('Ok:', acc)
+}
+```
+
+### day 9
+
+```js
+testPuzzle = document.querySelector('pre > code').textContent.trimRight().split('\n').map(Number)
+puzzle = document.body.textContent.trimRight().split('\n').map(Number)
+
+function part1(puzzle) {
+  console.log(findInvalidNumber(puzzle))
+}
+
+function part2(puzzle) {
+  const target = findInvalidNumber(puzzle)
+  const weaknessRange = puzzle.slice(...findWeaknessRangeLimits(puzzle, target))
+  console.log(Math.min(...weaknessRange) + Math.max(...weaknessRange))
+}
+
+// helpers:
+function findInvalidNumber(puzzle, preambleLength = 25) {
+  for (head = preambleLength; head < puzzle.length; head++) {
+    const addendRange = puzzle.slice(head - preambleLength, head)
+    const nextNumber = puzzle[head]
+
+    if (nextNumber !== undefined) {
+      let nextNumberIsValid = false
+
+      while (addendRange.length > 1) {
+        const firstAddend = addendRange.pop()
+
+        for (const secondAddend of addendRange) {
+          if (firstAddend + secondAddend === nextNumber) {
+            nextNumberIsValid = true
+            break
+          }
+        }
+        if (nextNumberIsValid) break
+      }
+      if (!nextNumberIsValid) {
+        return nextNumber
+      }
+    }
+  }
+}
+
+function findWeaknessRangeLimits(puzzle, target) {
+  let cutStart = 0
+
+  while (true) {
+    for (cutEnd = cutStart + 2; cutEnd < puzzle.length; cutEnd++) {
+      const rangeSum = puzzle.slice(cutStart, cutEnd).reduce((sum, curr) => (sum += curr))
+
+      if (rangeSum === target) {
+        return [cutStart, cutEnd]
+      }
+
+      if (rangeSum > target) {
+        cutStart++
+        break
+      }
+    }
+  }
 }
 ```
