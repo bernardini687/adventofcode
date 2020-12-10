@@ -384,3 +384,30 @@ function findWeaknessRangeLimits(puzzle, target) {
   }
 }
 ```
+
+### day 10
+
+```js
+testPuzzles = document.querySelectorAll('pre > code')
+
+part1Test1 = testPuzzles[0].textContent.trimRight().split('\n').map(Number)
+part1Test2 = testPuzzles[1].textContent.trimRight().split('\n').map(Number)
+
+puzzle = document.body.textContent.trimRight().split('\n').map(Number)
+
+function part1(puzzle) {
+  const chain = puzzle.concat().sort((a, b) => a - b)
+  const [last] = chain.slice(-1)
+
+  chain.push(last + 3)
+  chain.unshift(0)
+
+  const diffs = chain.map((adapter, i, adapters) => adapters[i + 1] - adapter)
+
+  return count(diffs, 1) * count(diffs, 3)
+}
+
+function count(diffs, val) {
+  return diffs.filter(diff => diff === val).length
+}
+```
