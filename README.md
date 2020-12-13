@@ -415,3 +415,47 @@ function count(diffs, val) {
 ### day 11
 
 ### day 12
+
+### day 13
+
+```js
+function part1() {
+  const [page] = document.location.pathname.split('/').slice(-1)
+  const input = page === 'input' ? document.body : document.querySelector('pre > code')
+
+  const [timestamp, timetable] = input.textContent.trimRight().split('\n')
+
+  const solver = new Solver(Number(timestamp), Solver.extractBusIds(timetable))
+
+  const earliestIndex = solver.nextDepartures.indexOf(solver.earliestDeparture)
+
+  return solver.busIds[earliestIndex] * (solver.earliestDeparture - solver.timestamp)
+}
+
+class Solver {
+  constructor(timestamp, busIds) {
+    this.timestamp = timestamp
+    this.busIds = busIds
+    this.nextDepartures = this._calcNextDepartures()
+    this.earliestDeparture = this._calcEarliestDeparture()
+  }
+
+  static extractBusIds(timetable) {
+    return timetable
+      .split(',')
+      .filter(id => id !== 'x')
+      .map(Number)
+  }
+
+  _calcEarliestDeparture() {
+    return Math.min(...this.nextDepartures)
+  }
+
+  _calcNextDepartures() {
+    return this.busIds.map(id => {
+      const missedBy = this.timestamp % id
+      return this.timestamp - missedBy + id
+    })
+  }
+}
+```
