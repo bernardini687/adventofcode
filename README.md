@@ -459,3 +459,60 @@ class Solver {
   }
 }
 ```
+
+### day 14
+
+```js
+function part1() {
+  const [page] = document.location.pathname.split('/').slice(-1)
+  const input = page === 'input' ? document.body : document.querySelector('pre > code')
+
+  const lines = input.textContent.trimRight().split('\n')
+
+  const solver = new Solver()
+
+  for (const line of lines) solver.process(line)
+
+  return Object.values(solver.memory).reduce((sum, curr) => (sum += parseInt(curr, 2)), 0)
+}
+
+class Solver {
+  constructor() {
+    this.mask = {}
+    this.memory = {}
+  }
+
+  process(line) {
+    if (/^mask/.test(line)) {
+      const [rawMask] = line.match(/[X\d]+/)
+      this.mask = this._calcMask(rawMask)
+    } else {
+      const [location, value] = line.match(/\d+/g)
+      this.memory[location] = this._applyMask(Number(value))
+    }
+  }
+
+  _calcMask(rawMask) {
+    return rawMask.split('').reduce((mask, curr, i) => {
+      if (curr === 'X') return mask
+
+      mask[i] = curr
+      return mask
+    }, {})
+  }
+
+  _applyMask(value) {
+    const binary = this._binary(value)
+
+    for (const [i, newValue] of Object.entries(this.mask)) {
+      binary[i] = newValue
+    }
+
+    return binary.join('')
+  }
+
+  _binary(decimal) {
+    return decimal.toString(2).padStart(36, '0').split('')
+  }
+}
+```
