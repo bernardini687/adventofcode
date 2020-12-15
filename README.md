@@ -516,3 +516,24 @@ class Solver {
   }
 }
 ```
+
+### day 15
+
+```js
+function part1(puzzleStr, queryNum) {
+  const spokenNums = puzzleStr.split(',').map(Number)
+
+  while (spokenNums.length < queryNum) {
+    const lastSpoken = spokenNums[spokenNums.length - 1]
+    const prevSpokenIdx = spokenNums.slice(0, -1).lastIndexOf(lastSpoken)
+
+    if (prevSpokenIdx < 0) {
+      spokenNums.push(0)
+    } else {
+      spokenNums.push(spokenNums.lastIndexOf(lastSpoken) - prevSpokenIdx)
+    }
+  }
+
+  return spokenNums[spokenNums.length - 1]
+}
+```
