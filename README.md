@@ -537,3 +537,66 @@ function part1(puzzleStr, queryNum) {
   return spokenNums[spokenNums.length - 1]
 }
 ```
+
+### day 16
+
+```js
+function part1() {
+  const [page] = document.location.pathname.split('/').slice(-1)
+  const input = page === 'input' ? document.body : document.querySelectorAll('pre > code')[1]
+
+  const [rawRules, rawTicket, rawTickets] = input.textContent.trimRight().split('\n\n')
+
+  const rules = Helper.buildRules(rawRules)
+  const tickets = Helper.buildTickets(rawTickets)
+  const helper = new Helper(rules)
+
+  const invalidValues = tickets.flatMap(t => t.filter(val => helper.invalidValueForAllRules(val)))
+
+  return invalidValues.reduce((sum, curr) => (sum += curr))
+}
+
+class Helper {
+  constructor(rules) {
+    // this.rules = rules
+    this.plainRules = Object.values(rules)
+    this.cache = {}
+  }
+
+  static buildRules(rawRules) {
+    return rawRules.split('\n').reduce((obj, curr) => {
+      const [label, values] = curr.split(':')
+      const [a, b, c, d] = values.match(/\d+/g).map(Number)
+
+      obj[label] = [
+        { min: a, max: b },
+        { min: c, max: d },
+      ]
+
+      return obj
+    }, {})
+  }
+
+  static buildTickets(rawTickets) {
+    return rawTickets
+      .split('\n')
+      .slice(1)
+      .map(t => t.split(',').map(Number))
+  }
+
+  invalidValueForAllRules(val) {
+    console.log(val)
+    if (val in this.cache) return this.cache[val]
+
+    const results = this.plainRules.map(
+      ([opt1, opt2]) => val < opt1.min || (val > opt1.max && val < opt2.min) || val > opt2.max
+    )
+
+    console.log(results)
+
+    return (this.cache[val] = results.reduce(
+      (boolProduct, testResult) => boolProduct && testResult
+    ))
+  }
+}
+```
