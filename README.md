@@ -585,14 +585,11 @@ class Helper {
   }
 
   invalidValueForAllRules(val) {
-    console.log(val)
     if (val in this.cache) return this.cache[val]
 
     const results = this.plainRules.map(
       ([opt1, opt2]) => val < opt1.min || (val > opt1.max && val < opt2.min) || val > opt2.max
     )
-
-    console.log(results)
 
     return (this.cache[val] = results.reduce(
       (boolProduct, testResult) => boolProduct && testResult
