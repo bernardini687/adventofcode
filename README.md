@@ -597,3 +597,71 @@ class Helper {
   }
 }
 ```
+
+### day 17
+
+TODO
+
+### day 18
+
+```js
+function part1() {
+  const puzzle = document.body.textContent.trimRight().split('\n')
+
+  helper = new Helper()
+
+  for (const mathLine of puzzle) helper.eval(mathLine)
+
+  return helper.results.reduce((sum, num) => (sum += num))
+}
+
+class Helper {
+  constructor() {
+    this.stack = []
+    this.results = []
+  }
+
+  eval(mathLine) {
+    this.stack.push('0')
+    this.stack.push('+')
+
+    for (const char of mathLine) {
+      if (char === ' ') continue
+
+      if (char === '+') {
+        this.stack.push(char)
+        continue
+      }
+      if (char === '*') {
+        this.stack.push(char)
+        continue
+      }
+      if (char === '(') {
+        this.stack.push(char)
+        this.stack.push('0')
+        this.stack.push('+')
+        continue
+      }
+      if (char === ')') {
+        this.reduce(this.stack)
+        continue
+      }
+
+      this.stack.push(char) // num
+      this.reduce(this.stack)
+    }
+
+    this.results.push(Number(this.stack.pop()))
+  }
+
+  reduce() {
+    const n2 = this.stack.pop()
+    const op = this.stack.pop()
+    const n1 = this.stack.pop()
+
+    if (this.stack.slice(-1)[0] === '(') this.stack.pop()
+
+    this.stack.push(eval(n1 + op + n2).toString())
+  }
+}
+```
