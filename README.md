@@ -239,10 +239,7 @@ function crossYesAnswers(group) {
 }
 ```
 
-### day 7
-
-build an Adjacency List to represent a DAG (Directed Acyclic Graph) from the puzzle's input.
-find all vertices with edges pointing to `shiny gold` (find `shiny gold`'s ancestors).
+### ~~day 7~~
 
 ### day 8
 
@@ -412,9 +409,9 @@ function count(diffs, val) {
 }
 ```
 
-### day 11
+### [day 11](11.js)
 
-### day 12
+### [day 12](12.js)
 
 ### day 13
 
@@ -598,9 +595,7 @@ class Helper {
 }
 ```
 
-### day 17
-
-TODO
+### ~~day 17~~
 
 ### day 18
 
@@ -666,7 +661,7 @@ class Helper {
 }
 ```
 
-### day 19
+### ~~day 19~~
 
 ### day 20
 
