@@ -665,3 +665,61 @@ class Helper {
   }
 }
 ```
+
+### day 20
+
+```js
+String.prototype.reverse = function () {
+  return this.split('').reverse().join('')
+}
+
+class Tile {
+  constructor(id, rows) {
+    this.id = id
+    this.top = rows[0]
+    this.right = rows.map(row => row.slice(-1)).join('')
+    this.bottom = rows.slice(-1)[0]
+    this.left = rows.map(row => row[0]).join('')
+    this.borders = [this.top, this.right, this.bottom, this.left]
+  }
+
+  // find if there is a matching border between two tiles
+  countMatchingBordersWith(otherTile) {
+    return this.borders.filter(
+      border => otherTile.borders.includes(border) || otherTile.borders.includes(border.reverse())
+    ).length
+  }
+}
+
+const [page] = document.location.pathname.split('/').slice(-1)
+const input = page === 'input' ? document.body : document.querySelector('pre > code')
+
+const rawTiles = input.textContent.trimRight().split('\n\n')
+
+const tiles = rawTiles.map(rawTile => {
+  const [id] = rawTile.match(/\d+/g)
+  return new Tile(id, rawTile.split('\n').slice(1))
+}, {})
+
+const borderPairs = tiles.flatMap((tile, i) =>
+  tiles
+    .slice(i + 1)
+    .map(otherTile => [tile.countMatchingBordersWith(otherTile), tile.id, otherTile.id])
+)
+
+const tilesMatchesCountDict = borderPairs.reduce((counter, [count, ...idPair]) => {
+  for (const id of idPair) {
+    if (id in counter) {
+      counter[id] += count
+    } else {
+      counter[id] = count
+    }
+  }
+
+  return counter
+}, {})
+
+Object.entries(tilesMatchesCountDict)
+  .filter(([id, count]) => count === 2) // take the edges (the only tiles with exactly 2 matching borders)
+  .reduce((product, [id, _]) => (product *= Number(id)), 1) // mult their IDs
+```
