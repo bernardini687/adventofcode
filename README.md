@@ -742,13 +742,6 @@ class Game {
     }
   }
 
-  score() {
-    return this.winner.reduce((product, cardValue, index, cards) => {
-      const multiplier = Math.abs(index - cards.length)
-      return (product += cardValue * multiplier)
-    }, 0)
-  }
-
   takeRound() {
     const p1Card = this.p1.shift()
     const p2Card = this.p2.shift()
@@ -758,6 +751,13 @@ class Game {
     } else {
       this.p2.push(p2Card, p1Card)
     }
+  }
+
+  score() {
+    return this.winner.reduce((product, cardValue, index, cards) => {
+      const multiplier = Math.abs(index - cards.length)
+      return (product += cardValue * multiplier)
+    }, 0)
   }
 
   get winner() {
