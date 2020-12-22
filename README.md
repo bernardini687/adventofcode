@@ -720,3 +720,58 @@ Object.entries(tilesMatchesCountDict)
   .filter(([id, count]) => count === 2) // take the edges (the only tiles with exactly 2 matching borders)
   .reduce((product, [id, _]) => (product *= Number(id)), 1) // mult their IDs
 ```
+
+### ~~day 21~~
+
+### day 22
+
+```js
+class Game {
+  constructor(p1, p2) {
+    this.p1 = p1
+    this.p2 = p2
+  }
+
+  static parsePlayer(player) {
+    return player.split('\n').slice(1).map(Number)
+  }
+
+  play() {
+    while (this.p1.length && this.p2.length) {
+      this.takeRound()
+    }
+  }
+
+  score() {
+    return this.winner.reduce((product, cardValue, index, cards) => {
+      const multiplier = Math.abs(index - cards.length)
+      return (product += cardValue * multiplier)
+    }, 0)
+  }
+
+  takeRound() {
+    const p1Card = this.p1.shift()
+    const p2Card = this.p2.shift()
+
+    if (p1Card > p2Card) {
+      this.p1.push(p1Card, p2Card)
+    } else {
+      this.p2.push(p2Card, p1Card)
+    }
+  }
+
+  get winner() {
+    return this.p1.length ? this.p1 : this.p2
+  }
+}
+
+const [page] = document.location.pathname.split('/').slice(-1)
+const input = page === 'input' ? document.body : document.querySelector('pre > code')
+
+const [p1, p2] = input.textContent.trimRight().split('\n\n')
+
+const game = new Game(Game.parsePlayer(p1), Game.parsePlayer(p2))
+
+game.play()
+game.score() // part 1
+```
