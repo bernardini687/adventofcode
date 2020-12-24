@@ -775,3 +775,84 @@ const game = new Game(Game.parsePlayer(p1), Game.parsePlayer(p2))
 game.play()
 game.score() // part 1
 ```
+
+### ~~day 23~~
+
+### day 24
+
+```js
+class Tile {
+  constructor(x, y, color) {
+    this.x = x
+    this.y = y
+    this.color = color
+  }
+
+  at(x, y) {
+    return this.x === x && this.y === y
+  }
+
+  black() {
+    return this.color === 'black'
+  }
+
+  flip() {
+    this.color = this.color === 'white' ? 'black' : 'white'
+  }
+}
+
+function parseCoordinates(indication) {
+  let x = 0
+  let y = 0
+  let amount = 2
+  let backup = amount
+
+  for (const direction of indication.split('')) {
+    switch (direction) {
+      case 'e':
+        x += amount
+        amount = backup
+        break
+      case 's':
+        backup = amount
+        amount = 1 // movements immediately following `s` or `n` are halved since we're dealing with a hex grid
+        y -= amount
+        break
+      case 'w':
+        x -= amount
+        amount = backup
+        break
+      case 'n':
+        backup = amount
+        amount = 1
+        y += amount
+        break
+      default:
+        throw new Error(`Unknown direction: ${direction}`)
+    }
+  }
+
+  return [x, y]
+}
+
+const [page] = document.location.pathname.split('/').slice(-1)
+const input = page === 'input' ? document.body : document.querySelector('pre > code')
+
+const indications = input.textContent.trimRight().split('\n')
+
+const floor = [new Tile(0, 0, 'white')]
+
+for (const indication of indications) {
+  const coordinates = parseCoordinates(indication)
+
+  const found = floor.find(tile => tile.at(...coordinates))
+
+  if (found) {
+    found.flip()
+  } else {
+    floor.push(new Tile(...coordinates, 'black'))
+  }
+}
+
+floor.filter(tile => tile.black()).length
+```
