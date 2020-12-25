@@ -856,3 +856,47 @@ for (const indication of indications) {
 
 floor.filter(tile => tile.black()).length
 ```
+
+### day 25
+
+```js
+// function t(secret, subject) {
+//   let i = 0
+//   let v = 1
+//   while (i++ < secret) {
+//     v *= subject
+//     v %= 20201227
+//   }
+//   return v
+// }
+
+// function crack(pubKey) {
+//   let loopSize = 1
+//   while (t(loopSize, 7) !== pubKey) {
+//     loopSize++
+//   }
+//   return loopSize
+// }
+
+// t(crack(a), b)
+
+const a = 9717666
+const b = 20089533
+
+let x = 1
+let secret = 0
+while (x !== a) {
+  x *= 7
+  x %= 20201227
+  secret += 1
+}
+console.log(secret)
+
+let i = 0
+x = 1
+while (i++ < secret) {
+  x *= b
+  x %= 20201227
+}
+console.log(x)
+```
