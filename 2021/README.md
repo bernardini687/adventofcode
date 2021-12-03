@@ -102,3 +102,39 @@ const pos = input.reduce(
 
 console.log(pos.h * pos.d)
 ```
+
+### day 3
+
+```js
+// const input = document.querySelector('pre > code').textContent
+const input = document.body.textContent
+
+const size = input.indexOf('\n')
+
+const columns = input
+  .trimRight()
+  .split('\n')
+  .reduce((acc, line) => {
+    // iterate over the columns
+    for (let i = 0; i < size; i++) {
+      if (acc[i] === undefined) {
+        acc[i] = { 0: 0, 1: 0 } // build an object that will count the number of zeros and ones in a column
+      } else {
+        acc[i][line[i]]++ // update the count of zeros and ones of this column
+      }
+    }
+    return acc
+  }, [])
+
+const gammaRate = columns.reduce(
+  (acc, col) => (acc += Object.keys(col).reduce((zero, one) => (col[zero] > col[one] ? zero : one))),
+  ''
+)
+
+const epsilonRate = gammaRate
+  .split('')
+  .map(bit => (1 - bit).toString())
+  .join('')
+
+console.log(parseInt(gammaRate, 2) * parseInt(epsilonRate, 2))
+```
