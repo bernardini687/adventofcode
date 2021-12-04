@@ -106,6 +106,10 @@ console.log(pos.h * pos.d)
 ### day 3
 
 ```js
+/*
+ * PART 1
+ */
+
 // const input = document.querySelector('pre > code').textContent
 const input = document.body.textContent
 
@@ -137,4 +141,46 @@ const epsilonRate = gammaRate
   .join('')
 
 console.log(parseInt(gammaRate, 2) * parseInt(epsilonRate, 2))
+
+/*
+ * PART 2 🔥
+ */
+
+var input = document.documentURI.includes('input') ? document.body : document.querySelector('pre > code')
+input = input.textContent.trimRight().split('\n')
+
+function pickRating(data, criteria) {
+  var oneMatches = []
+  var zeroMatches = []
+
+  for (let i = 0; i < data[0].length; i++) {
+    if (data.length === 1) {
+      break
+    }
+
+    data.forEach(bits => {
+      if (bits[i] === '1') {
+        oneMatches.push(bits)
+      } else {
+        zeroMatches.push(bits)
+      }
+    })
+
+    if (criteria(oneMatches.length, zeroMatches.length)) {
+      data = [...oneMatches]
+    } else {
+      data = [...zeroMatches]
+    }
+
+    oneMatches = []
+    zeroMatches = []
+  }
+
+  return data
+}
+
+var o2 = pickRating(input, (a, b) => a >= b)
+var co2 = pickRating(input, (a, b) => a < b)
+
+console.log(parseInt(o2, 2) * parseInt(co2, 2))
 ```
