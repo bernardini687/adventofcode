@@ -184,3 +184,120 @@ var co2 = pickRating(input, (a, b) => a < b)
 
 console.log(parseInt(o2, 2) * parseInt(co2, 2))
 ```
+
+### day 4
+
+```js
+class Game {
+  constructor(nums, boards) {
+    this.nums = nums
+    this.picks = 0
+    this.boards = boards
+    this.winners = []
+    this.winNums = []
+  }
+
+  advance() {
+    const num = this.nums.shift()
+    this.picks++
+
+    console.log(`num: ${num}, picks: ${this.picks}`)
+
+    this.boards.forEach(board => {
+      board.mark(num)
+    })
+
+    if (this.picks > 4) {
+      while (this.checkWinners(num) > -1) {} // there can be multiple winners for the same number!
+    }
+  }
+
+  checkWinners(num) {
+    const found = this.boards.findIndex(board => board.isBingo())
+    console.log(`is bingo: ${JSON.stringify(this.boards[found])}, boards size: ${this.boards.length}`)
+
+    if (found !== -1) {
+      this.winners.push(this.boards[found])
+      this.winNums.push(num)
+      this.boards.splice(found, 1) // remove the winning board from the others
+      console.log(`new winner! board winners size: ${this.winners.length}, called num: ${num}`)
+    } else {
+      console.log('still no winners')
+    }
+
+    return found
+  }
+}
+
+class Board {
+  constructor(data) {
+    this.rows = this._buildRows(data)
+    this.size = this.rows[0].length
+  }
+
+  mark(num) {
+    this.rows.forEach((row, i) => {
+      const found = row.findIndex(cell => !cell.marked && cell.num === num)
+
+      if (found !== -1) {
+        console.log(`this board have ${num} here: [${i}][${found}]!`)
+        this.rows[i][found] = { num, marked: true }
+      }
+    })
+  }
+
+  isBingo() {
+    let bingo = false
+
+    bingo = this.rows.findIndex(row => row.every(cell => cell.marked)) > -1
+
+    if (!bingo) {
+      // check vertical bingo
+      for (let i = 0; i < this.size; i++) {
+        const col = this.rows.map(row => row[i])
+        if (col.every(cell => cell.marked)) {
+          bingo = true
+          break
+        }
+      }
+    }
+
+    return bingo
+  }
+
+  _buildRows(data) {
+    return data.split('\n').map(row => {
+      const r = row.trim().split(/\s+/)
+
+      return r.map(num => ({ num, marked: false }))
+    })
+  }
+}
+
+let input = document.documentURI.includes('input') ? document.body : document.querySelector('pre > code')
+input = input.textContent.trimRight().split('\n\n')
+
+const [_numbers, ..._boards] = input
+
+const numbers = _numbers.split(',')
+const boards = _boards.map(b => new Board(b))
+
+const game = new Game([...numbers], [...boards])
+
+while (game.boards.length > 0 && game.picks < 85) {
+  // `(game.winners.length < 1)` for part 1
+  game.advance()
+}
+
+const winner = game.winners[game.winners.length - 1] // `[0]` for part 1
+const winNum = game.winNums[game.winNums.length - 1] // `[0]` for part 1
+
+const sumOfUnmarked = winner.rows
+  .flatMap(row => row.filter(cell => !cell.marked))
+  .reduce((sum, cell) => {
+    sum += Number(cell.num)
+    return sum
+  }, 0)
+
+console.log(sumOfUnmarked * winNum)
+```
