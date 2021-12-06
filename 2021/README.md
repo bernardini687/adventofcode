@@ -301,3 +301,34 @@ const sumOfUnmarked = winner.rows
 
 console.log(sumOfUnmarked * winNum)
 ```
+
+### day 5
+
+### day 6
+
+```js
+var input = document.documentURI.includes("input")
+  ? document.body
+  : document.querySelector("pre > code");
+input = input.textContent.split(",").map(Number);
+
+function runSimulation(t, state) {
+  for (i = 0; i < t; i++) {
+    let newborns = 0;
+    state = state.map((f) => {
+      if (f > 0) {
+        return f - 1;
+      } else {
+        newborns++;
+        return 6;
+      }
+    });
+    if (newborns > 0) {
+      state.push(...new Array(newborns).fill(8));
+    }
+  }
+  return state;
+}
+
+console.log(runSimulation(80, input).length); // part 1
+```
