@@ -4,8 +4,8 @@ def low_points(rows = data)
       # set neighbours, if neighbour is behind edge or corner, set it to a high number (10)
       up    = i.zero? ? 10 : rows[i - 1][j]
       left  = j.zero? ? 10 : row[j - 1]
-      down  = rows[i + 1]&.fetch(j)   || 10
-      right = row[j + 1]              || 10
+      down  = rows[i + 1]&.fetch(j) || 10
+      right = row[j + 1]            || 10
 
       low_points << cell if cell < [up, left, down, right].min # current cell is less than the smallest neighbour
     end
