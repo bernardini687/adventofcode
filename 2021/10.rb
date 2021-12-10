@@ -7,34 +7,57 @@ SCORE = {
   '>' => 25137,
 }
 
-def valid_line_or_illegal_chars(lines = data)
-  lines.map do |line|
-    stack = []
-    # iterate over line characters and return the whole line if it is valid, or
-    # break early and return the illegal character
-    line.chomp.chars do |char|
-      cl_i = CLOSINGS.index char
-      if cl_i
-        op_i = OPENINGS.index stack.pop
-        break char if cl_i != op_i
-      else
-        stack << char
-      end
+# return an array of the remaining unpaired brackets or
+# return the first encountered illegal bracket
+def check(line)
+  brackets = []
+  line.chomp.chars do |bracket|
+    closing = CLOSINGS.index bracket
+    if closing
+      opening = OPENINGS.index brackets.pop # latest opening bracket must match current closing one
+      return bracket if closing != opening  # if not, return the illegal bracket
+    else
+      brackets << bracket
     end
   end
+  brackets
 end
 
 def syntax_error_score
-  valid_line_or_illegal_chars.select { |e| e.size == 1 }.reduce(0) do |sum, char|
-    sum += SCORE[char]
+  illegal_brackets.reduce(0) do |sum, bracket|
+    sum += SCORE[bracket]
+  end
+end
+
+def middle_score
+  scores = unpaired_brackets.map do |openings|
+    completion_score_of(openings.reverse)
+  end
+
+  scores.sort[scores.size / 2]
+end
+
+def illegal_brackets(artifacts = data)
+  artifacts.select { |lines| lines.kind_of? String }
+end
+
+def unpaired_brackets(artifacts = data)
+  artifacts.select { |lines| lines.kind_of? Array }
+end
+
+def completion_score_of(completion)
+  completion.reduce(0) do |result, bracket|
+    result *= 5
+    result += OPENINGS.index(bracket) + 1
   end
 end
 
 def data(data = DATA)
-  @data ||= DATA.readlines
+  @data ||= DATA.readlines.map { |line| check(line) }
 end
 
 puts "(part 1): #{syntax_error_score}"
+puts "(part 2): #{middle_score}"
 
 __END__
 {[<({(<(<{((<(()())[()<>]>({[][]}{<>{}}))[[({}[]){()<>}]<{{}<>}(<><>)>]){[{{<>()}[{}<>]}({()[]}([]))]{{[(
