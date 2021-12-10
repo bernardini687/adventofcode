@@ -7,7 +7,7 @@ SCORE = {
   '>' => 25137,
 }
 
-def valid_lines_or_illegal_char(lines = data)
+def valid_line_or_illegal_chars(lines = data)
   lines.map do |line|
     stack = []
     # iterate over line characters and return the whole line if it is valid, or
@@ -25,7 +25,7 @@ def valid_lines_or_illegal_char(lines = data)
 end
 
 def syntax_error_score
-  valid_lines_or_illegal_char.select { |e| e.size == 1 }.reduce(0) do |sum, char|
+  valid_line_or_illegal_chars.select { |e| e.size == 1 }.reduce(0) do |sum, char|
     sum += SCORE[char]
   end
 end
