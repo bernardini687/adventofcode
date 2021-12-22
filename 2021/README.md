@@ -342,3 +342,5 @@ console.log(runSimulation(80, input).length); // part 1
 ### [day 10](10.rb)
 
 ### [day 14](14.rb)
+
+### [day 21](21.rb)
