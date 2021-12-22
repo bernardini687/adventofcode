@@ -12,24 +12,44 @@ def _parse_line(line)
 end
 
 def run(players = state)
-  d100 = (1..100).to_a # TODO: wrap around 100!
+  @dice_roll = 1
+  @rolls_count = 0
 
-  # while players.any { |p| p[:score] < 1000 }
+  until _winner? players do
+    players.map! { |p| _take_turn p }
+  end
 
-  players.map! { |p| _take_turn p, d100.shift(3) }
+  p @rolls_count
 
-  # players find one with least score
-  # number of rolls
+  players
 end
 
-def _take_turn(player, rolls)
-  p rolls
-  # advance `pos` by rolls.sum and increase score by `pos`
+def _winner?(players)
+  players.any? { |p| p[:score] > 999 }
+end
+
+def _take_turn(player)
+  rolls = []
+
+  3.times {
+    @dice_roll = 1 if @dice_roll > 100
+
+    rolls << @dice_roll
+    @dice_roll += 1
+  }
+
+  @rolls_count += 3
+
+  pos = (player[:pos] + rolls.sum) % 10
+  pos = pos.zero? ? 10 : pos
+
+  player[:pos] = pos
+  player[:score] += pos
   player
 end
 
 puts "(part 1): #{run}"
 
 __END__
-Player 1 starting position: 4
-Player 2 starting position: 8
+Player 1 starting position: 1
+Player 2 starting position: 6
